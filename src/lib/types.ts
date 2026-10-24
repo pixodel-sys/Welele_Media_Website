@@ -137,6 +137,7 @@ export interface Creator {
   featured: boolean;
   displayOrder: number;
   stories: string[];
+  isConceptProfile?: boolean;
 }
 
 export interface Partner {

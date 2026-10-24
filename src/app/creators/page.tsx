@@ -37,6 +37,9 @@ export default function CreatorsPage() {
               <div>
                 <div className="kicker">Founding Creator Network</div>
                 <h2>Founding Showrunners &amp; Filmmakers</h2>
+                <p style={{ margin: '8px 0 0', fontSize: '13px', color: 'var(--muted)', maxWidth: '640px' }}>
+                  Concept &amp; Demonstration Slate — Profiles below illustrate our initial creative roles and attached development slates. Official verified talent rosters will be announced and updated via the CMS.
+                </p>
               </div>
             </div>
 

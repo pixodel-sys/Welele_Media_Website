@@ -35,16 +35,16 @@ export default async function AdminCreatorsPage() {
         <div className="standby-disabled-notice" role="note">
           <span style={{ fontSize: '16px' }}>ℹ️</span>
           <span>
-            <strong>Standby / Inspection Mode:</strong> Displaying {creators.length} founding creator profiles. Profiles cannot be modified or added until PostgreSQL is live.
+            <strong>Standby / Inspection Mode:</strong> Displaying {creators.length} concept/demonstration slate profiles. Creating, editing, and publishing creator profiles are disabled until PostgreSQL is connected.
           </span>
         </div>
       )}
 
       <div className="admin-card">
         <div className="admin-card-header">
-          <h2 className="admin-card-title">Creator Profiles ({creators.length})</h2>
+          <h2 className="admin-card-title">Creator Profiles ({creators.length} Concept Slate Records)</h2>
           <span style={{ fontSize: '12px', color: 'var(--admin-subtle)' }}>
-            Founding network roster
+            Founding demonstration roster
           </span>
         </div>
 
@@ -67,6 +67,20 @@ export default async function AdminCreatorsPage() {
                   <td>
                     <strong>{c.name}</strong>
                     <span style={{ fontSize: '11px', color: 'var(--admin-subtle)' }}>/{c.slug}</span>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        padding: '1px 5px',
+                        borderRadius: '3px',
+                        background: 'rgba(255, 107, 0, 0.1)',
+                        color: 'var(--orange)',
+                        marginTop: '3px',
+                      }}
+                    >
+                      Concept Slate Profile
+                    </span>
                   </td>
                   <td>
                     <span style={{ color: 'var(--orange)', fontWeight: 700 }}>{c.role}</span>

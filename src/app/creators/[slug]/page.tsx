@@ -89,7 +89,25 @@ export default async function CreatorProfilePage({ params }: PageProps) {
 
               {/* Creator Bio & Details */}
               <div>
-                <span className="eyebrow" style={{ color: 'var(--orange)' }}>Creator Profile</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span className="eyebrow" style={{ color: 'var(--orange)' }}>Creator Profile</span>
+                  {creator.isConceptProfile && (
+                    <span
+                      style={{
+                        fontSize: '10px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.08em',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        background: 'rgba(255, 107, 0, 0.12)',
+                        color: 'var(--orange)',
+                        fontWeight: 700,
+                      }}
+                    >
+                      Concept Slate Profile
+                    </span>
+                  )}
+                </div>
                 <h1 style={{ fontSize: 'clamp(38px, 5vw, 64px)', fontWeight: 950, letterSpacing: '-0.05em', margin: '14px 0 16px', lineHeight: 1 }}>
                   {creator.name}
                 </h1>

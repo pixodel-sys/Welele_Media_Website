@@ -13,10 +13,31 @@ const COOKIE_NAME = process.env.ADMIN_SESSION_COOKIE || 'welele_media_admin_sess
 
 function getJwtSecret(): Uint8Array {
   const secret = process.env.ADMIN_JWT_SECRET;
-  if (!secret || secret === 'GENERATE_RANDOM_SECRET') {
-    // In dev, warn and fallback to a deterministic dev secret to avoid crash before env is filled
+  const isPlaceholder =
+    !secret ||
+    secret.trim() === '' ||
+    secret === 'GENERATE_RANDOM_SECRET' ||
+    secret === 'GENERATE_RANDOM_SECRET_MIN_32_CHARS';
+
+  if (process.env.NODE_ENV === 'production') {
+    if (isPlaceholder || secret.length < 32) {
+      throw new Error(
+        'SECURITY CRITICAL: ADMIN_JWT_SECRET must be configured with a secure random key of at least 32 characters in production environments.'
+      );
+    }
+    return new TextEncoder().encode(secret);
+  }
+
+  // Development-only fallback: warn and use local deterministic secret
+  if (isPlaceholder) {
+    if (process.env.NODE_ENV !== 'test') {
+      console.warn(
+        '[DEV SECURITY NOTICE] ADMIN_JWT_SECRET is not set. Using dev-only fallback. Do NOT use in production.'
+      );
+    }
     return new TextEncoder().encode('welele-media-standalone-fallback-secret-for-dev-only-32bytes');
   }
+
   return new TextEncoder().encode(secret);
 }
 

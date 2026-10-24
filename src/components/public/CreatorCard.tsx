@@ -9,6 +9,7 @@ export interface CreatorCardData {
   bio: string;
   portraitImage?: string | null;
   location?: string | null;
+  isConceptProfile?: boolean;
 }
 
 export default function CreatorCard({ creator }: { creator: CreatorCardData }) {
@@ -34,7 +35,26 @@ export default function CreatorCard({ creator }: { creator: CreatorCardData }) {
         </div>
 
         <div className="creator-info">
-          <span className="creator-role">{creator.role}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '6px' }}>
+            <span className="creator-role">{creator.role}</span>
+            {creator.isConceptProfile && (
+              <span
+                style={{
+                  fontSize: '9px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.08em',
+                  padding: '2px 6px',
+                  borderRadius: '3px',
+                  background: 'rgba(255, 107, 0, 0.12)',
+                  color: 'var(--orange)',
+                  fontWeight: 700,
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                Concept Slate
+              </span>
+            )}
+          </div>
           <h3 className="creator-name">{creator.name}</h3>
           {creator.location && (
             <span className="creator-location">

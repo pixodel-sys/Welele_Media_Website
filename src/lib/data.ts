@@ -199,9 +199,10 @@ export const defaultStories: Story[] = [
 ];
 
 // ------------------------------------------------------------------------------
-// CREATORS — Founding creator network
-// NOTE: Bios intentionally avoid unverified awards / years-of-experience claims.
-// Replace with company-confirmed profiles via the CMS.
+// CREATORS — Concept / Demonstration Slate Profiles
+// NOTE: These records are concept/demo slate profiles demonstrating creative roles
+// attached to our in-development titles. They are explicitly marked as concept profiles
+// until formal company-confirmed representations are signed and published via the CMS.
 // ------------------------------------------------------------------------------
 const emptySocials = {
   websiteUrl: null,
@@ -231,6 +232,7 @@ export const defaultCreators: Creator[] = [
     featured: true,
     displayOrder: 1,
     stories: ['The Amber Heir', 'New Horizons'],
+    isConceptProfile: true,
   },
   {
     id: 'creator-2',
@@ -249,6 +251,7 @@ export const defaultCreators: Creator[] = [
     featured: true,
     displayOrder: 2,
     stories: ['The Amber Heir'],
+    isConceptProfile: true,
   },
   {
     id: 'creator-3',
@@ -267,6 +270,7 @@ export const defaultCreators: Creator[] = [
     featured: true,
     displayOrder: 3,
     stories: ['Kilimani Nights', 'New Horizons'],
+    isConceptProfile: true,
   },
   {
     id: 'creator-4',
@@ -285,6 +289,7 @@ export const defaultCreators: Creator[] = [
     featured: true,
     displayOrder: 4,
     stories: ['Jozi Shadows'],
+    isConceptProfile: true,
   },
 ];
 

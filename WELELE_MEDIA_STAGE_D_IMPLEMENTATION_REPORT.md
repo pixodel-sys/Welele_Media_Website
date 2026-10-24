@@ -53,6 +53,7 @@ Admin authentication is managed via `src/lib/auth.ts`:
 - **Environment Credentials:** Validates against `ADMIN_USERNAME` and `ADMIN_PASSWORD_HASH` using `bcryptjs`.
 - **JWT Session Tokens:** Issues cryptographically signed JSON Web Tokens using `jose` with `ADMIN_JWT_SECRET`.
 - **HTTP-Only Cookies:** Tokens are stored in an `httpOnly`, `sameSite: 'lax'`, `path: '/'` cookie (`welele_media_admin_session`).
+- **Strict Production Secret Enforcement:** In production environments (`NODE_ENV === 'production'`), `ADMIN_JWT_SECRET` must be explicitly set with a key of at least 32 characters; missing, empty, or placeholder secrets immediately throw an exception to prevent insecure deployment.
 - **Development Fallback:** In non-production environments where credentials are not yet configured in `.env`, a development-only credential fallback (`admin` / `welele2026!`) is allowed with an explicit console warning. It is locked out in production.
 - **Dedicated Auth APIs:** Handled by `/api/admin/login` (credential verification and cookie assignment) and `/api/admin/logout` (cookie invalidation).
 
@@ -62,7 +63,7 @@ Admin authentication is managed via `src/lib/auth.ts`:
 
 ### Editorial
 - **Stories:** 4 authentic original titles in development (*The Amber Heir*, *Jozi Shadows*, *Kilimani Nights*, *New Horizons*).
-- **Creators:** Founding talent network (Zanele Khumalo, Kofi Mensah, Amina Mwangi, Tunde Adebayo).
+- **Creators:** 4 concept/demo slate profiles (*Zanele Khumalo*, *Kofi Mensah*, *Amina Mwangi*, *Tunde Adebayo*) demonstrating attached creative disciplines on our in-development titles. In adherence with the Credibility Rule, each record is explicitly flagged with `isConceptProfile: true` and rendered with a *"Concept Slate Profile"* tag until formal confirmed talent rosters are published via the CMS.
 - **Newsroom:** 3 corporate announcements and industry perspectives (*Introducing Welele Media*, *The Future of African Storytelling*, *Introducing Welele Studio*).
 - **Media References:** 10 registered public photographic, concept, and brand identity assets.
 
@@ -106,8 +107,8 @@ The CMS health status is monitored through `src/lib/db-health.ts`:
               └─────────────────┘       └────────────────────────┘
 ```
 
-- **Health Probe Caching:** 30-second TTL cache prevents database ping storms.
-- **Strict Query Timeout:** 2.5-second timeout ensures admin pages render immediately even during network degradation.
+- **Health Probe Caching:** 15-second TTL cache (`CACHE_TTL_MS = 15000`) prevents database ping storms while remaining responsive to status transitions.
+- **Strict Query Timeout:** 2.0-second non-blocking timeout (`2000ms`) ensures admin pages render immediately without hanging, even during network degradation.
 
 ---
 
