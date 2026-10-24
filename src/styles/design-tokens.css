@@ -1,0 +1,61 @@
+/* ==============================================================================
+   WELELE MEDIA — DESIGN SYSTEM TOKENS
+   Visual Direction: Premium African Media Company • Cinematic • Dark Editorial
+   Extracted from welele_media_website_v2_cinematic.html
+   ============================================================================== */
+
+:root {
+  /* Core Cinematic Palette */
+  --bg: #02090d;
+  --bg-deep: #010507;
+  --panel: #07141a;
+  --panel-alt: #0b1d24;
+  --panel-hover: #0e242d;
+  --line: #17313a;
+  --line-glow: rgba(34, 183, 201, 0.22);
+  --line-subtle: rgba(255, 255, 255, 0.08);
+
+  /* Typography Colors */
+  --text: #f5f7f8;
+  --text-pure: #ffffff;
+  --muted: #9aaab0;
+  --subtle: #6c7f86;
+
+  /* Brand Accents */
+  --orange: #ff8a00;
+  --orange-bright: #ff9a00;
+  --pink: #ff1676;
+  --pink-glow: rgba(255, 22, 118, 0.25);
+  --cyan: #22b7c9;
+  --cyan-subtle: rgba(34, 183, 201, 0.18);
+
+  /* Signature Gradients */
+  --gradient-brand: linear-gradient(90deg, #ff9800, #ff1676);
+  --gradient-brand-vertical: linear-gradient(180deg, #ff9d00, #ff1676);
+  --gradient-text: linear-gradient(90deg, #ffffff 5%, #ff9a00 48%, #ff1676 90%);
+  --gradient-hero: linear-gradient(90deg, rgba(2,9,13,0.99) 0%, rgba(2,9,13,0.84) 40%, rgba(2,9,13,0.42) 72%, rgba(2,9,13,0.78) 100%),
+                   linear-gradient(0deg, rgba(2,9,13,1) 0%, transparent 35%);
+  --gradient-card-glow: radial-gradient(circle at 45% 25%, rgba(255, 175, 72, 0.9), transparent 26%),
+                        radial-gradient(circle at 50% 60%, rgba(255, 22, 118, 0.8), transparent 32%);
+
+  /* Layout & Sizing */
+  --container-max: 1200px;
+  --container-pad: 24px;
+  --nav-height: 88px;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-pill: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.18s ease;
+  --transition-normal: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-slow: 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}

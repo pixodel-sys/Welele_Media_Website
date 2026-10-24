@@ -1,0 +1,342 @@
+// ==============================================================================
+// WELELE MEDIA CORPORATE WEBSITE - PRISMA SCHEMA (STANDALONE POSTGRESQL)
+// ==============================================================================
+// 100% Isolated from welele.app - Zero connection to existing Supabase DB.
+// ==============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------------------------------
+// 0. SHARED ENUMS (Stage C)
+// ------------------------------------------------------------------------------
+// Publication state for growth-stage offerings (Services, Platforms).
+// COMING_SOON lets the company announce capabilities honestly before launch.
+enum PublishStatus {
+  ACTIVE
+  COMING_SOON
+  DRAFT
+}
+
+enum ServiceCategory {
+  STORIES
+  STUDIO
+  ADVERTISING
+  TECHNOLOGY
+  CREATOR
+  BRAND
+  DISTRIBUTION
+}
+
+enum CaseStudyStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// ------------------------------------------------------------------------------
+// 1. SITE & PAGE SETTINGS
+// ------------------------------------------------------------------------------
+model SiteSettings {
+  id              String   @id @default("default")
+
+  // --- General ---
+  companyName     String   @default("Welele Media")
+  tagline         String   @default("Stories That Move You")
+  brandLine       String   @default("We make media that moves.")
+  siteDescription String   @default("Welele Media connects stories, creators, audiences, brands and technology to build the next generation of African media.")
+  metaDescription String   @default("Welele Media — Pan-African stories, film, television, creators and original content.")
+  logoUrl         String?
+
+  // --- Homepage ---
+  heroEyebrow     String   @default("Welele Media™")
+  heroHeadline    String   @default("Stories that move you.")
+  heroDescription String   @default("Welele Media is a Pan-African media company creating, curating and distributing powerful stories that connect people, culture and global audiences.")
+  heroArtworkUrl  String?
+  heroMediaUrl    String?  // Optional hero video loop
+  featuredStorySlugs String[] @default([])
+  homepageSections   Json?    // Ordered list of { key, enabled } for homepage blocks
+  showStats       Boolean  @default(false) // Only enable with company-confirmed figures
+  stats           Json?    // [{ value, label }] — confirmed data only
+
+  // --- Legacy watch CTA (kept for backwards compatibility) ---
+  watchCtaLabel   String   @default("WATCH NOW")
+  watchCtaUrl     String   @default("#stories") // Ordinary configurable outbound URL
+
+  // --- Platform (outbound links only — NO runtime integration) ---
+  platformUrl        String?  @default("https://welele.app")
+  platformAppStoreUrl   String?
+  platformGooglePlayUrl String?
+  platformStatus     PublishStatus @default(COMING_SOON)
+
+  // --- Studio ---
+  studioHeading      String   @default("Creative technology for modern media.")
+  studioDescription  String   @default("We combine human creative direction with emerging technology to create campaigns, content and experiences built for today's audiences.")
+  studioFeaturedServiceSlugs String[] @default([])
+
+  // --- Social ---
+  socialInstagram String?
+  socialFacebook  String?
+  socialYoutube   String?
+  socialTiktok    String?
+  socialLinkedin  String?
+  socialX         String?
+
+  // --- Contact ---
+  contactEmail    String   @default("hello@welelemedia.co.za")
+  contactPhone    String?
+  address         String?
+  enquiryInfo     String?
+  footerText      String   @default("Stories. Culture. Africa. Global impact.")
+  updatedAt       DateTime @updatedAt
+}
+
+// ------------------------------------------------------------------------------
+// 2. STORIES / EDITORIAL SHOWS
+// ------------------------------------------------------------------------------
+model Story {
+  id                String          @id @default(cuid())
+  title             String
+  slug              String          @unique
+  category          String          // "African Original", "Crime & Drama", "Documentary", "Romance"
+  tagline           String?
+  synopsis          String
+  description       String
+  episodeCount      Int             @default(1)
+  ageRating         String          @default("16+")
+  heroImage         String
+  posterImage       String?
+  trailerUrl        String?
+  watchUrl          String?         // Configurable outbound URL (plain external link)
+  featured          Boolean         @default(false)
+  publicationStatus String          @default("PUBLISHED") // DRAFT, PUBLISHED, ARCHIVED
+  productionStatus  String          @default("IN_DEVELOPMENT") // IN_DEVELOPMENT, PRE_PRODUCTION, IN_PRODUCTION, RELEASED
+  displayOrder      Int             @default(0)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  creators          StoryCreator[]
+
+  @@index([slug])
+  @@index([publicationStatus])
+}
+
+// ------------------------------------------------------------------------------
+// 3. CREATORS
+// ------------------------------------------------------------------------------
+model Creator {
+  id            String         @id @default(cuid())
+  name          String
+  slug          String         @unique
+  role          String         // e.g. "Director", "Writer", "Showrunner", "Producer"
+  creatorType   String         @default("FILMMAKER") // DIRECTOR, WRITER, PRODUCER, ACTOR, DIGITAL_CREATOR, FILMMAKER, PHOTOGRAPHER, CREATIVE_TECHNOLOGIST, EMERGING_TALENT
+  bio           String
+  portraitImage String?
+  location      String?        // e.g. "Johannesburg"
+  country       String?        // e.g. "South Africa"
+  projects      String[]       @default([]) // Non-Welele projects / credits
+  representation String?       // Agent / management details
+  contactEmail  String?
+  websiteUrl    String?
+  twitter       String?
+  instagram     String?
+  linkedin      String?
+  facebook      String?
+  youtube       String?
+  tiktok        String?
+  featured      Boolean        @default(false)
+  displayOrder  Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  stories       StoryCreator[]
+
+  @@index([slug])
+}
+
+// Junction: Story <-> Creator
+model StoryCreator {
+  id        String   @id @default(cuid())
+  storyId   String
+  creatorId String
+  role      String?  // Story-specific role (e.g. "Director", "Executive Producer")
+  story     Story    @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  creator   Creator  @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+
+  @@unique([storyId, creatorId])
+}
+
+// ------------------------------------------------------------------------------
+// 4. PARTNERS
+// ------------------------------------------------------------------------------
+model Partner {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  logoUrl      String
+  description  String?
+  websiteUrl   String?
+  tier         String   @default("COLLABORATOR") // BROADCASTER, BRAND, DISTRIBUTOR, COLLABORATOR
+  featured     Boolean  @default(true)
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([slug])
+}
+
+// ------------------------------------------------------------------------------
+// 5. NEWSROOM & PRESS ARTICLES
+// ------------------------------------------------------------------------------
+model NewsArticle {
+  id           String   @id @default(cuid())
+  title        String
+  slug         String   @unique
+  excerpt      String
+  body         String   // Editorial article content (markdown/text)
+  coverImage   String?
+  authorName   String   @default("Welele Media Newsroom")
+  category     String   @default("Corporate") // Press Release, Features, Originals, Creator Spotlight
+  publishedAt  DateTime @default(now())
+  status       String   @default("PUBLISHED") // DRAFT, PUBLISHED
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([slug])
+  @@index([status])
+}
+
+// ------------------------------------------------------------------------------
+// 6. CONTACT SUBMISSIONS
+// ------------------------------------------------------------------------------
+model ContactSubmission {
+  id              String   @id @default(cuid())
+  name            String
+  email           String
+  subject         String?
+  enquiryCategory String   // "Partnership", "Creator Pitch", "Press", "General"
+  message         String
+  isRead          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([isRead])
+}
+
+// ------------------------------------------------------------------------------
+// 7. SERVICES (Stage C — What We Do / Welele Studio)
+// ------------------------------------------------------------------------------
+model Service {
+  id               String          @id @default(cuid())
+  title            String
+  slug             String          @unique
+  shortDescription String
+  description      String
+  category         ServiceCategory
+  image            String?
+  icon             String?         // Glyph or icon key
+  status           PublishStatus   @default(DRAFT)
+  featured         Boolean         @default(false)
+  displayOrder     Int             @default(0)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  caseStudies      CaseStudy[]
+
+  @@index([category])
+  @@index([status])
+}
+
+// ------------------------------------------------------------------------------
+// 8. PLATFORMS (Stage C — editorial representation of audience platforms)
+// ------------------------------------------------------------------------------
+// IMPORTANT: This is how Welele Media *describes* the Welele App.
+// It is NOT an integration. No API keys, DB URLs or auth for the app live here.
+// The only relationship is the outbound URLs below.
+model Platform {
+  id              String        @id @default(cuid())
+  name            String
+  slug            String        @unique
+  tagline         String?
+  description     String
+  longDescription String?
+  logo            String?
+  heroImage       String?
+  screenshots     String[]      @default([])
+  features        Json?         // [{ title, description, icon }]
+  benefits        Json?         // [{ title, description }]
+  ctaLabel        String        @default("Discover Welele")
+  externalUrl     String?       // e.g. https://welele.app (plain outbound link)
+  appStoreUrl     String?
+  googlePlayUrl   String?
+  status          PublishStatus @default(COMING_SOON)
+  featured        Boolean       @default(false)
+  displayOrder    Int           @default(0)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@index([status])
+}
+
+// ------------------------------------------------------------------------------
+// 9. CASE STUDIES (Stage C — content model only, intentionally unseeded)
+// ------------------------------------------------------------------------------
+model CaseStudy {
+  id           String          @id @default(cuid())
+  title        String
+  slug         String          @unique
+  client       String?
+  serviceId    String?
+  service      Service?        @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  description  String
+  challenge    String?
+  solution     String?
+  outcome      String?
+  heroImage    String?
+  gallery      String[]        @default([])
+  videoUrl     String?
+  technologies String[]        @default([])
+  isConceptual Boolean         @default(false) // Must be true for demo / speculative work
+  featured     Boolean         @default(false)
+  status       CaseStudyStatus @default(DRAFT)
+  publishedAt  DateTime?
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([status])
+}
+
+// ------------------------------------------------------------------------------
+// 10. MEDIA ASSETS (Standalone Media Library)
+// ------------------------------------------------------------------------------
+model MediaAsset {
+  id        String   @id @default(cuid())
+  fileName  String
+  fileUrl   String
+  mimeType  String
+  fileSize  Int
+  altText   String?
+  width     Int?
+  height    Int?
+  createdAt DateTime @default(now())
+}
+
+// ------------------------------------------------------------------------------
+// 11. ADMIN USERS (Standalone Authentication)
+// ------------------------------------------------------------------------------
+model AdminUser {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  email        String    @unique
+  passwordHash String
+  role         String    @default("ADMIN") // ADMIN, EDITOR
+  lastLoginAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([username])
+  @@index([email])
+}
